@@ -1,5 +1,5 @@
 export default function operator() {
-        const operator = {};
+	const operator = {};
 	const timing = performance.getEntriesByType("navigation")[0];
 
 	///////
@@ -8,7 +8,6 @@ export default function operator() {
 	//
 	// Created by subtracting the navigation start from the end of the
 	// load events
-	// https://developer.mozilla.org/en-US/docs/Web/API/Navigation_timing_API#Calculate_the_total_page_load_time
 	//////
 	operator.pageLoad = () => {
 		var fullLoad = timing.loadEventEnd - timing.fetchStart;
@@ -27,5 +26,5 @@ export default function operator() {
 
 	window.op = operator;
 
-        return operator;
+	return operator;
 }
