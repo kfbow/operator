@@ -3,7 +3,7 @@ export default function operator() {
     const timing = {
         get vals() {
             if (window.performance) {
-                if (window.performance.getEntriesByType("navigation")) {
+                if (window.performance.getEntriesByType("navigation").length) {
                     return window.performance.getEntriesByType("navigation")[0];
                 } else if (window.performance.timing) {
                     return window.performance.timing;
