@@ -2,16 +2,14 @@ export default function operator() {
     const operator = {};
     const timing = {
         get vals() {
-            if (
-                window.performance &&
-                window.performance.getEntriesByType("navigation")
-            ) {
-                return window.performance.getEntriesByType("navigation")[0];
-            } else if (window.performance && window.performance.timing) {
-                return window.performance.timing;
-            } else {
-                return undefined;
+            if (window.performance) {
+                if (window.performance.getEntriesByType("navigation")) {
+                    return window.performance.getEntriesByType("navigation")[0];
+                } else if (window.performance.timing) {
+                    return window.performance.timing;
+                }
             }
+            return {};
         }
     };
 
@@ -27,15 +25,18 @@ export default function operator() {
      * Returns a promise that when completed will send the resource load time.
      * Created by subtracting the navigation start from the response end.
      */
-    operator.resourcesLoaded = waitForValue("fetchStart", "responseEnd");
+    operator.resourcesLoaded = waitForValue("responseStart", "responseEnd");
 
     /**
      * This function will try every 100ms to collect the value of the resource.
      * @return {Promise} A Promise that is awaiting a value.
      */
     function waitForValue(firstEvent, endingEvent) {
-        var fullLoad = timing.vals[endingEvent] - timing.vals[firstEvent];
-        var promise = new Promise(function cb(resolve, reject) {
+        let fullLoad = timing.vals[endingEvent] - timing.vals[firstEvent];
+        return new Promise(function cb(resolve, reject) {
+            if (isNaN(parseFloat(fullLoad))) {
+                reject("Error getting time");
+            }
             if (fullLoad < 0) {
                 window.setTimeout(function() {
                     fullLoad =
@@ -46,7 +47,6 @@ export default function operator() {
                 resolve(fullLoad);
             }
         });
-        return promise;
     }
 
     return operator;
